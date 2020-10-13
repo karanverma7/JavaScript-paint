@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Editor</title>
+    <style>
+        body{
+            margin: 0px;
+            background-color: blueviolet;
+            text-align: center;
+        }
+        header {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px;          
+            align-items: center;  
+        }
+        #header {
+            color: rgb(255, 255, 255);
+            filter: drop-shadow(1px 1px 2px black);
+            font-size: 45px;
+            font-weight: 550;
+            margin-right: 400px;
+        }
+        #controls {
+            display: flex;
+            background-color: rgb(255, 255, 255);
+            width: 22%;
+            padding: 12px 20px;
+            justify-content: space-between;
+            border-radius: 20px;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: left;
+            filter: drop-shadow(1px 1px 3px black);
+        }
+
+        #controls input {
+            height: 2px;
+            width: 70px;
+            margin-top: 20px;
+        }
+
+        select {
+            width: 70px;
+            margin-top: 10px;
+            outline-style: none;
+        }
+
+        #controls input[type=color], option {
+            height: 14px;
+            margin-top: 10px;
+            width: 60px;
+        }
+        #draw {
+            background-color: white;
+            margin-top: 10px;
+            border: 5px solid rgb(29, 17, 80);
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+        }
+        #credit {
+            color: white;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            position: absolute;
+            bottom:50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            padding: 7px 0px;
+            font-weight: 550;
+        }
+        @media only screen and (max-width: 600px){
+
+            header {
+                width: 1100px;
+            }
+            #header {
+                margin-right: 0px;
+                width: 20%;
+            }
+            header #controls {
+                width: 35%;
+            }
+            #draw {
+                margin-top: 50px;
+                width: 1100px;
+                height: 1200px;
+            }
+            #credit {
+                bottom: -1100px;
+                transform: scale(2);
+                width: 100%;
+                margin-left: 200px;
+            }
+            }
+    </style>
+</head>
+<body>
+    <header>
+        <div id="header">Paint</div>
+        <div id="controls">
+            <div class="option">Pen <br>
+                <input type="range" min="1" max="20" value="5" id="penWidth">
+            </div>
+            <div class="option">Pen Color <br>
+                <input type="color" id="color">
+            </div>
+            <div class="option">Background<br>
+                <input type="color" id="bgColor">
+            </div>
+        </div>
+    </header>
+    <canvas id="draw" width="1200px" height="500px">  
+    </canvas>
+    <div id="credit"> 
+        <svg width="20" height="20" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M232.819 98.333L270.819 47.5H512V0H0V98.333H232.819ZM171.833 34.833H201.833V64.833H171.833V34.833ZM110.292 34.833H140.292V64.833H110.292V34.833ZM48.75 34.833H78.75V64.833H48.75V34.833Z" fill="#F7F7F7"/>
+            <path d="M285.848 77.5L247.848 128.333H0V512H512V77.5H285.848ZM178.337 381.208L157.124 402.421L72.87 318.167L157.124 233.913L178.337 255.126L115.296 318.167L178.337 381.208ZM218.643 434.901L191.358 422.431L292.358 201.431L319.643 213.901L218.643 434.901ZM354.876 402.42L333.663 381.207L396.704 318.166L333.663 255.125L354.876 233.912L439.13 318.166L354.876 402.42Z" fill="#F7F7F7"/>
+        </svg> &nbsp;
+        Developed by Karan Verma
+    </div>
+</body>
+<script>
+    const canvas = document.querySelector('#draw')
+    const ctx = canvas.getContext('2d')    
+    ctx.lineCap = 'round'
+
+    let color = document.querySelector('#color')
+    let bgColor = document.querySelector('#bgColor')
+    let penWidth = document.querySelector('#penWidth')
+
+    let isDrawing = false
+    let PosX 
+    let PosY
+
+    function pickColor() {
+        ctx.strokeStyle = this.value
+    }
+    function pickBgColor() {
+        canvas.style.backgroundColor = this.value
+    }
+    function pickPen() {
+        ctx.lineWidth = this.value
+    }
+
+    function draw(e) {
+        if(!isDrawing) return;
+        ctx.beginPath()
+        ctx.moveTo(PosX, PosY)
+        ctx.lineTo(e.offsetX, e.offsetY)
+        ctx.stroke();
+
+        //Updating the current position of pointer
+        [PosX, PosY] = [e.offsetX, e.offsetY];
+    }
+
+    canvas.addEventListener('mousedown', (e) => {
+        isDrawing = true;
+
+        //Setting Starting position of pointer
+        [PosX, PosY] = [e.offsetX, e.offsetY]
+    })
+    canvas.addEventListener('mousemove', draw)
+    canvas.addEventListener('mouseup', () => isDrawing = false)
+    canvas.addEventListener('mouseout', () => isDrawing = false)
+    color.addEventListener('change', pickColor)
+    bgColor.addEventListener('change', pickBgColor)
+    penWidth.addEventListener('change', pickPen)
+</script>
+</html>
